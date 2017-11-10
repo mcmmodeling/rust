@@ -21,7 +21,6 @@ use rustc_serialize::{Decodable, Decoder, Encodable, Encoder, opaque,
                       SpecializedDecoder, SpecializedEncoder,
                       UseSpecializedDecodable, UseSpecializedEncodable};
 use session::{CrateDisambiguator, Session};
-use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::mem;
 use syntax::ast::NodeId;
@@ -30,6 +29,8 @@ use syntax_pos::{BytePos, Span, NO_EXPANSION, DUMMY_SP};
 use ty;
 use ty::codec::{self as ty_codec, TyDecoder, TyEncoder};
 use ty::context::TyCtxt;
+
+use rustc_data_structures::sync::Lock;
 
 // Some magic values used for verifying that encoding and decoding. These are
 // basically random numbers.
@@ -50,10 +51,10 @@ pub struct OnDiskCache<'sess> {
 
     // This field collects all Diagnostics emitted during the current
     // compilation session.
-    current_diagnostics: RefCell<FxHashMap<DepNodeIndex, Vec<Diagnostic>>>,
+    current_diagnostics: Lock<FxHashMap<DepNodeIndex, Vec<Diagnostic>>>,
 
     prev_cnums: Vec<(u32, String, CrateDisambiguator)>,
-    cnum_map: RefCell<Option<IndexVec<CrateNum, Option<CrateNum>>>>,
+    cnum_map: Lock<Option<IndexVec<CrateNum, Option<CrateNum>>>>,
 
     prev_filemap_starts: BTreeMap<BytePos, StableFilemapId>,
     codemap: &'sess CodeMap,
@@ -127,9 +128,9 @@ impl<'sess> OnDiskCache<'sess> {
             prev_diagnostics,
             prev_filemap_starts: header.prev_filemap_starts,
             prev_cnums: header.prev_cnums,
-            cnum_map: RefCell::new(None),
+            cnum_map: Lock::new(None),
             codemap: sess.codemap(),
-            current_diagnostics: RefCell::new(FxHashMap()),
+            current_diagnostics: Lock::new(FxHashMap()),
             query_result_index: query_result_index.into_iter().collect(),
         }
     }
@@ -140,9 +141,9 @@ impl<'sess> OnDiskCache<'sess> {
             prev_diagnostics: FxHashMap(),
             prev_filemap_starts: BTreeMap::new(),
             prev_cnums: vec![],
-            cnum_map: RefCell::new(None),
+            cnum_map: Lock::new(None),
             codemap,
-            current_diagnostics: RefCell::new(FxHashMap()),
+            current_diagnostics: Lock::new(FxHashMap()),
             query_result_index: FxHashMap(),
         }
     }

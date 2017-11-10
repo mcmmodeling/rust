@@ -11,3 +11,8 @@ crate-type = ["dylib"]
 [dependencies]
 log = "0.3"
 serialize = { path = "../libserialize" }
+cfg-if = "0.1.2"
+
+[dependencies.parking_lot]
+version = "0.5"
+features = ["nightly"]
