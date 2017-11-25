@@ -2075,7 +2075,7 @@ dependencies = [
 [[package]]
 name = "scoped-tls"
 version = "0.1.0"
-source = "git+https://github.com/Zoxc/scoped-tls.git#1cd3e61f4175bbf49009f6add5e4303148de0c66"
+source = "git+https://github.com/Zoxc/scoped-tls.git#324e723273d0304abd421032fc96044d72c4d34a"
 
 [[package]]
 name = "scoped-tls"
@@ -2318,6 +2318,7 @@ dependencies = [
  "rustc_cratesio_shim 0.0.0",
  "rustc_data_structures 0.0.0",
  "rustc_errors 0.0.0",
+ "scoped-tls 0.1.0 (git+https://github.com/Zoxc/scoped-tls.git)",
  "serialize 0.0.0",
  "syntax_pos 0.0.0",
 ]
@@ -2339,6 +2340,7 @@ name = "syntax_pos"
 version = "0.0.0"
 dependencies = [
  "rustc_data_structures 0.0.0",
+ "scoped-tls 0.1.0 (git+https://github.com/Zoxc/scoped-tls.git)",
  "serialize 0.0.0",
  "unicode-width 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
