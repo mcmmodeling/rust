@@ -35,7 +35,7 @@ use rustc_serialize::{Encodable, Encoder, SpecializedEncoder, opaque};
 use std::io::prelude::*;
 use std::io::Cursor;
 use std::path::Path;
-use std::rc::Rc;
+use rustc_data_structures::sync::Lrc;
 use std::u32;
 use syntax::ast::{self, CRATE_NODE_ID};
 use syntax::codemap::Spanned;
@@ -300,7 +300,7 @@ impl<'a, 'tcx> EncodeContext<'a, 'tcx> {
                                                          .to_string_lossy()
                                                          .into_owned();
                     adapted.name = abs_path;
-                    Rc::new(adapted)
+                    Lrc::new(adapted)
                 }
             })
             .collect::<Vec<_>>();

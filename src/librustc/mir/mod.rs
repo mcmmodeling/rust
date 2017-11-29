@@ -29,11 +29,11 @@ use rustc_back::slice;
 use hir::{self, InlineAsm};
 use std::ascii;
 use std::borrow::{Cow};
-use std::cell::Ref;
+use rustc_data_structures::sync::ReadGuard;
+use std::sync::Arc;
 use std::fmt::{self, Debug, Formatter, Write};
 use std::{iter, u32};
 use std::ops::{Index, IndexMut};
-use std::rc::Rc;
 use std::vec::IntoIter;
 use syntax::ast::{self, Name};
 use syntax_pos::Span;
@@ -180,13 +180,13 @@ impl<'tcx> Mir<'tcx> {
     }
 
     #[inline]
-    pub fn predecessors(&self) -> Ref<IndexVec<BasicBlock, Vec<BasicBlock>>> {
+    pub fn predecessors(&self) -> ReadGuard<IndexVec<BasicBlock, Vec<BasicBlock>>> {
         self.cache.predecessors(self)
     }
 
     #[inline]
-    pub fn predecessors_for(&self, bb: BasicBlock) -> Ref<Vec<BasicBlock>> {
-        Ref::map(self.predecessors(), |p| &p[bb])
+    pub fn predecessors_for(&self, bb: BasicBlock) -> ReadGuard<Vec<BasicBlock>> {
+        ReadGuard::map(self.predecessors(), |p| &p[bb])
     }
 
     #[inline]
@@ -1750,10 +1750,10 @@ pub struct UnsafetyViolation {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct UnsafetyCheckResult {
     /// Violations that are propagated *upwards* from this function
-    pub violations: Rc<[UnsafetyViolation]>,
+    pub violations: Arc<[UnsafetyViolation]>,
     /// unsafe blocks in this function, along with whether they are used. This is
     /// used for the "unused_unsafe" lint.
-    pub unsafe_blocks: Rc<[(ast::NodeId, bool)]>,
+    pub unsafe_blocks: Arc<[(ast::NodeId, bool)]>,
 }
 
 /// The layout of generator state
